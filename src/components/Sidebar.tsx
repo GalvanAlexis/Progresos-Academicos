@@ -11,7 +11,6 @@ import { useAppContext } from '@/lib/AppContext';
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdminClick: () => void;
 }
 
 const HOME_SECTIONS = [
@@ -25,7 +24,7 @@ const NAV_ITEMS = [
   { label: 'Chat Assistant', path: '/chat' },
 ];
 
-export default function Sidebar({ isOpen, onClose, onAdminClick }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { animationsEnabled, setAnimationsEnabled, theme, toggleTheme } = useAppContext();
@@ -170,7 +169,7 @@ export default function Sidebar({ isOpen, onClose, onAdminClick }: SidebarProps)
             Sistema
           </p>
           <button
-            onClick={() => { onClose(); onAdminClick(); }}
+            onClick={() => { onClose(); router.push('/login'); }}
             style={{
               display: 'flex',
               alignItems: 'center',

@@ -10,8 +10,7 @@ import AboutSection from '@/components/home/AboutSection';
 import SkillsSection from '@/components/home/SkillsSection';
 import ContactSection from '@/components/home/ContactSection';
 import FAQSection from '@/components/home/FAQSection';
-import AdminLogin from '@/components/home/AdminLogin';
-import AdminDashboard from '@/components/home/AdminDashboard';
+
 import RevealObserver from '@/components/home/RevealObserver';
 import ReadingProgress from '@/components/home/ReadingProgress';
 
@@ -21,8 +20,7 @@ const ParallaxDecor = dynamic(() => import('@/components/home/ParallaxDecor'), {
 
 export default function HomeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
-  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+
 
   return (
     <>
@@ -64,19 +62,9 @@ export default function HomeLayout() {
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onAdminClick={() => setShowAdminLogin(true)}
       />
 
-      <AdminLogin
-        isOpen={showAdminLogin}
-        onClose={() => setShowAdminLogin(false)}
-        onSuccess={() => setShowAdminDashboard(true)}
-      />
 
-      <AdminDashboard
-        isOpen={showAdminDashboard}
-        onClose={() => setShowAdminDashboard(false)}
-      />
 
       <main
         id="main-content"
