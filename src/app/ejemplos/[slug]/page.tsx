@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import ContablePage from '../contable/page';
+import ElearningPage from '../elearning/page';
 
 const EJEMPLOS: Record<string, { title: string; desc: string }> = {
   landing: {
@@ -17,6 +18,10 @@ const EJEMPLOS: Record<string, { title: string; desc: string }> = {
   delivery: {
     title: 'Sabor Express — Delivery de Comida',
     desc: 'Plataforma de delivery con menu interactivo, carrito, checkout y panel admin.',
+  },
+  elearning: {
+    title: 'Sabor Academy — Plataforma E-learning de Cocina',
+    desc: 'Portal educativo de cocina para ninos con cursos interactivos, lecciones paso a paso, quizzes y certificados.',
   },
 };
 
@@ -41,6 +46,9 @@ export default async function EjemploPage({ params }: { params: Promise<{ slug: 
 
   if (slug === 'contable') {
     return <ContablePage />;
+  }
+  if (slug === 'elearning') {
+    return <ElearningPage />;
   }
 
   notFound();

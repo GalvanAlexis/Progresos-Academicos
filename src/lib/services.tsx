@@ -200,6 +200,7 @@ export const CATALOGO: ServiceItem[] = [
     description: 'Sistema de gestion de aprendizaje: cursos, modulos, progreso de alumnos, evaluaciones, certificados y pagos. Ideal para escalar la enseñanza digitalmente.',
     persona: 'Academias, instructores, empresas de capacitacion, coaches.',
     complexity: 'compleja',
+    ejemploSlug: 'elearning',
   },
   {
     id: 'erp',

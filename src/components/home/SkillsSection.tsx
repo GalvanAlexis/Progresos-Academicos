@@ -162,7 +162,6 @@ export default function SkillsSection() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px', color: 'var(--muted)' }}>
                   <span>Competencia</span>
-                  <span style={{ fontWeight: 600, color: area.color }}>{area.potency}%</span>
                 </div>
                 <div style={{ height: '4px', background: 'var(--surface-2)', borderRadius: '99px', overflow: 'hidden' }}>
                   <motion.div
@@ -325,7 +324,6 @@ export default function SkillsSection() {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px', color: 'var(--muted)' }}>
                       <span>Nivel de competencia</span>
-                      <span style={{ fontWeight: 700, color: area.color }}>{area.potency}%</span>
                     </div>
                     <div style={{ height: '6px', background: 'var(--surface-2)', borderRadius: '99px', overflow: 'hidden' }}>
                       <motion.div
