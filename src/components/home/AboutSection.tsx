@@ -1,11 +1,7 @@
 "use client";
 
-/**
- * AboutSection — ISS-052
- * Sección biográfica interactiva: 3 capítulos (Perfil, Empresa, Formación).
- */
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { flushSync } from "react-dom";
 
 const ABOUT_CHAPTERS = [
   {
@@ -19,7 +15,7 @@ const ABOUT_CHAPTERS = [
       "Data Science",
       "SaaS",
       "Arquitectura",
-      "5+ a\u00F1os exp",
+      "5+ años exp",
     ],
   },
   {
@@ -40,6 +36,19 @@ const ABOUT_CHAPTERS = [
 
 export default function AboutSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const toggleChapter = (id: string | null) => {
+    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!(document as any).startViewTransition || isReducedMotion) {
+      setSelectedId(id);
+      return;
+    }
+    (document as any).startViewTransition(() => {
+      flushSync(() => {
+        setSelectedId(id);
+      });
+    });
+  };
 
   return (
     <section
@@ -84,258 +93,258 @@ export default function AboutSection() {
             gap: "20px",
           }}
         >
-          {ABOUT_CHAPTERS.map((chapter) => (
-            <motion.article
-              key={chapter.id}
-              layoutId={`about-card-${chapter.id}`}
-              onClick={() => setSelectedId(chapter.id)}
-              className="skill-card reveal"
-              style={{ cursor: "pointer", background: "var(--surface)" }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <motion.h3
-                layoutId={`about-title-${chapter.id}`}
+          {ABOUT_CHAPTERS.map((chapter) => {
+            const isSelected = selectedId === chapter.id;
+            
+            return (
+              <article
+                key={chapter.id}
+                onClick={() => toggleChapter(chapter.id)}
+                className="skill-card reveal"
                 style={{
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  color: "var(--foreground)",
-                  marginBottom: "10px",
-                  letterSpacing: "-0.01em",
+                  cursor: "pointer",
+                  background: "var(--surface)",
+                  transition: "transform 0.2s, box-shadow 0.2s",
+                  viewTransitionName: isSelected ? "about-card" : "none",
+                  visibility: isSelected ? "hidden" : "visible",
                 }}
-              >
-                {chapter.title}
-              </motion.h3>
-
-              <motion.p
-                layoutId={`about-desc-${chapter.id}`}
-                style={{
-                  fontSize: "13px",
-                  color: "var(--muted-light)",
-                  lineHeight: 1.7,
-                  marginBottom: "16px",
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.12)";
                 }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+                onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.98)"; }}
+                onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1.02)"; }}
               >
-                {chapter.desc}
-              </motion.p>
-
-              {/* Tags */}
-              <motion.div
-                layoutId={`about-tags-${chapter.id}`}
-                style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
-              >
-                {chapter.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="tech-badge"
-                    style={{ fontSize: "10px", padding: "2px 8px" }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </motion.div>
-
-              {/* External links (solo en perfil) */}
-              {chapter.id === "perfil" && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  style={{ display: "flex", gap: "12px", marginTop: "20px" }}
+                <h3
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    color: "var(--foreground)",
+                    marginBottom: "10px",
+                    letterSpacing: "-0.01em",
+                    viewTransitionName: isSelected ? "about-title" : "none",
+                  }}
                 >
-                  <a
-                    href="https://github.com/GalvanAlexis"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      fontSize: "12px",
-                      color: "var(--muted)",
-                      textDecoration: "none",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--accent)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--muted)";
-                    }}
+                  {chapter.title}
+                </h3>
+
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: "var(--muted-light)",
+                    lineHeight: 1.7,
+                    marginBottom: "16px",
+                    viewTransitionName: isSelected ? "about-desc" : "none",
+                  }}
+                >
+                  {chapter.desc}
+                </p>
+
+                {/* Tags */}
+                <div
+                  style={{ 
+                    display: "flex", 
+                    flexWrap: "wrap", 
+                    gap: "6px",
+                    viewTransitionName: isSelected ? "about-tags" : "none",
+                  }}
+                >
+                  {chapter.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="tech-badge"
+                      style={{ fontSize: "10px", padding: "2px 8px" }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* External links (solo en perfil) */}
+                {chapter.id === "perfil" && (
+                  <div
+                    style={{ display: "flex", gap: "12px", marginTop: "20px" }}
                   >
-                    GitHub &rarr;
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/alexis-galvan"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      fontSize: "12px",
-                      color: "var(--muted)",
-                      textDecoration: "none",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--accent)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--muted)";
-                    }}
-                  >
-                    LinkedIn &rarr;
-                  </a>
-                </motion.div>
-              )}
-            </motion.article>
-          ))}
+                    <a
+                      href="https://github.com/GalvanAlexis"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted)",
+                        textDecoration: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        transition: "color 0.2s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "var(--accent)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "var(--muted)";
+                      }}
+                    >
+                      GitHub &rarr;
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/in/alexis-galvan"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted)",
+                        textDecoration: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        transition: "color 0.2s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "var(--accent)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "var(--muted)";
+                      }}
+                    >
+                      LinkedIn &rarr;
+                    </a>
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
       </div>
 
       {/* Expanded Modal */}
-      <AnimatePresence>
-        {selectedId && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
-              style={{
-                position: "fixed",
-                inset: 0,
-                background: "var(--overlay-bg)",
-                backdropFilter: "blur(4px)",
-                zIndex: 100,
-              }}
-            />
-            {ABOUT_CHAPTERS.map(
-              (chapter) =>
-                chapter.id === selectedId && (
-                  <div
-                    key={`modal-about-${chapter.id}`}
+      {selectedId && (
+        <>
+          <div
+            onClick={() => toggleChapter(null)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "var(--overlay-bg)",
+              backdropFilter: "blur(4px)",
+              zIndex: 100,
+              viewTransitionName: "about-overlay",
+            }}
+          />
+          {ABOUT_CHAPTERS.map(
+            (chapter) =>
+              chapter.id === selectedId && (
+                <div
+                  key={`modal-about-${chapter.id}`}
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 101,
+                    padding: "20px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <article
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={chapter.title}
+                    onClick={() => toggleChapter(null)}
                     style={{
-                      position: "fixed",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      zIndex: 101,
-                      padding: "20px",
-                      pointerEvents: "none",
+                      background: "var(--background)",
+                      border: "1px solid var(--border)",
+                      borderTop: "2px solid var(--accent)",
+                      borderRadius: "12px",
+                      padding: "32px",
+                      width: "100%",
+                      maxWidth: "500px",
+                      maxHeight: "85vh",
+                      overflowY: "auto",
+                      boxShadow: "var(--card-shadow-lg)",
+                      pointerEvents: "auto",
+                      position: "relative",
+                      cursor: "pointer",
+                      viewTransitionName: "about-card",
                     }}
                   >
-                    <motion.article
-                      role="dialog"
-                      aria-modal="true"
-                      aria-label={chapter.title}
-                      layoutId={`about-card-${chapter.id}`}
+                    <h3
                       style={{
-                        background: "var(--background)",
-                        border: "1px solid var(--border)",
-                        borderTop: "2px solid var(--accent)",
-                        borderRadius: "12px",
-                        padding: "32px",
-                        width: "100%",
-                        maxWidth: "500px",
-                        boxShadow: "var(--card-shadow-lg)",
-                        pointerEvents: "auto",
-                        position: "relative",
+                        fontSize: "24px",
+                        fontWeight: 700,
+                        color: "var(--foreground)",
+                        marginBottom: "12px",
+                        letterSpacing: "-0.02em",
+                        viewTransitionName: "about-title",
                       }}
                     >
-                      <button
-                        onClick={() => setSelectedId(null)}
-                        style={{
-                          position: "absolute",
-                          top: "16px",
-                          right: "16px",
-                          background: "transparent",
-                          border: "none",
-                          color: "var(--muted)",
-                          cursor: "pointer",
-                          padding: "8px",
-                          fontSize: "14px",
-                        }}
-                      >
-                        ✕
-                      </button>
+                      {chapter.title}
+                    </h3>
 
-                      <motion.h3
-                        layoutId={`about-title-${chapter.id}`}
-                        style={{
-                          fontSize: "24px",
-                          fontWeight: 700,
-                          color: "var(--foreground)",
-                          marginBottom: "12px",
-                          letterSpacing: "-0.02em",
-                        }}
-                      >
-                        {chapter.title}
-                      </motion.h3>
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        color: "var(--muted-light)",
+                        lineHeight: 1.6,
+                        marginBottom: "24px",
+                        fontWeight: 500,
+                        viewTransitionName: "about-desc",
+                      }}
+                    >
+                      {chapter.desc}
+                    </p>
 
-                      <motion.p
-                        layoutId={`about-desc-${chapter.id}`}
+                    <div
+                      style={{
+                        background: "var(--surface)",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        marginBottom: "24px",
+                        border: "1px solid var(--border-subtle)",
+                        viewTransitionName: "about-details-box",
+                      }}
+                    >
+                      <p
                         style={{
                           fontSize: "14px",
-                          color: "var(--muted-light)",
-                          lineHeight: 1.6,
-                          marginBottom: "24px",
-                          fontWeight: 500,
+                          color: "var(--foreground-2)",
+                          lineHeight: 1.8,
+                          margin: 0,
                         }}
                       >
-                        {chapter.desc}
-                      </motion.p>
+                        {chapter.details}
+                      </p>
+                    </div>
 
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        style={{
-                          background: "var(--surface)",
-                          padding: "20px",
-                          borderRadius: "8px",
-                          marginBottom: "24px",
-                          border: "1px solid var(--border-subtle)",
-                        }}
-                      >
-                        <p
-                          style={{
-                            fontSize: "14px",
-                            color: "var(--foreground-2)",
-                            lineHeight: 1.8,
-                          }}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        viewTransitionName: "about-tags",
+                      }}
+                    >
+                      {chapter.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="tech-badge"
+                          style={{ fontSize: "12px", padding: "4px 10px" }}
                         >
-                          {chapter.details}
-                        </p>
-                      </motion.div>
-
-                      <motion.div
-                        layoutId={`about-tags-${chapter.id}`}
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "8px",
-                        }}
-                      >
-                        {chapter.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="tech-badge"
-                            style={{ fontSize: "12px", padding: "4px 10px" }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </motion.div>
-                    </motion.article>
-                  </div>
-                ),
-            )}
-          </>
-        )}
-      </AnimatePresence>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                </div>
+              ),
+          )}
+        </>
+      )}
     </section>
   );
 }
