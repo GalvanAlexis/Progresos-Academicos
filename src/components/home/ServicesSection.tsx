@@ -104,7 +104,7 @@ const SERVICES = [
 export default function ServicesSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [emblaRef] = useEmblaCarousel({ loop: true, align: "start", dragFree: true });
+  const [emblaRef] = useEmblaCarousel({ loop: true, align: "center", dragFree: true });
 
   useEffect(() => {
     if (selectedId) {
@@ -236,7 +236,7 @@ export default function ServicesSection() {
                     border: "1px solid var(--border)",
                     borderRadius: "12px",
                     padding: "32px 28px",
-                    flex: "0 0 clamp(280px, 85%, 380px)",
+                    flex: "0 0 clamp(280px, 75%, 380px)",
                     marginRight: "24px",
                     minWidth: "0",
                     cursor: "pointer",
