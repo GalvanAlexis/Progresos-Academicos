@@ -103,12 +103,12 @@ export default function AdminSidebar() {
           border: 'none',
           borderRight: '1px solid rgba(255,255,255,0.1)',
           padding: 0,
-          display: 'flex',
-          flexDirection: 'column',
         }}
       >
-        {navContent(true)}
-        {footerContent(true)}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {navContent(true)}
+          {footerContent(true)}
+        </div>
       </div>
     </>
   );

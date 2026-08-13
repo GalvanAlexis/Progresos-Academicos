@@ -62,12 +62,10 @@ export default function Sidebar() {
           border: 'none',
           borderRight: '1px solid var(--border)',
           padding: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0',
         }}
       >
-        {/* Header */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {/* Header */}
         <div
           style={{
             padding: '16px 20px',
@@ -274,6 +272,7 @@ export default function Sidebar() {
             v1.0.0 — Portfolio Blado
           </div>
         </section>
+        </div>
       </div>
     </>
   );
