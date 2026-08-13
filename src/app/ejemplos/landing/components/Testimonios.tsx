@@ -33,21 +33,10 @@ export default function Testimonios() {
           </button>
           <div ref={scrollRef} className="lum-testimonial-hscroll">
             {testimonials.map((t, i) => (
-              <div
-                key={t.id}
-                className="lum-card lum-testimonial-card lum-testimonial-reveal"
-                style={{ ['--t-delay' as string]: `${i * 0.15}s` }}
-              >
+              <div key={t.id} className="lum-card lum-testimonial-card lum-testimonial-reveal" style={{ ['--t-delay' as string]: `${i * 0.15}s` }} >
                 <div className="lum-testimonial-header">
                   <div className="lum-testimonial-avatar">
-                    <img
-                      src={t.img || AVATARS[i % AVATARS.length]}
-                      alt={t.name}
-                      loading="lazy"
-                      width="44"
-                      height="44"
-                      className="lum-avatar-img"
-                    />
+                    <img src={t.img || AVATARS[i % AVATARS.length]} alt={t.name} loading="lazy" width="44" height="44" className="lum-avatar-img" />
                   </div>
                   <div>
                     <div className="lum-stars">{'★'.repeat(t.rating)}</div>

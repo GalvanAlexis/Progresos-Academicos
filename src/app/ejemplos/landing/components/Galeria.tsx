@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { motion } from 'framer-motion';
 import { useAdmin } from '../hooks/useAdmin';
 
 export const GALERIA_IMAGES = [
@@ -55,72 +54,36 @@ export default function Galeria({ rotateX, rotateY }: Props) {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <div
-      className="lum-galeria"
-      onMouseEnter={() => setIsHovering(true)}
+    <div className="lum-galeria" onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <motion.div
-        className="lum-glow-global"
-        style={{
-          position: 'absolute', inset: -40,
-          background: 'radial-gradient(ellipse at center, rgba(184,118,118,0.15), transparent 70%)',
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }}
-        animate={{ rotateX, rotateY }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-      />
+      <div className="lum-glow-global" />
       <div className="lum-gar-embla" ref={emblaRef}>
         <div className="lum-gar-container">
           {images.map((img, i) => (
             <div className="lum-gar-slide" key={i}>
-              <motion.div
-                className="lum-gar-img-wrap"
-                style={{ perspective: 1000 }}
-                animate={{ rotateX, rotateY }}
-                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  width="320"
-                  height="460"
-                  className="lum-gar-img"
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  fetchPriority={i === 0 ? 'high' : 'low'}
-                  onError={(e) => {
+              <div className="lum-gar-img-wrap" >
+                <img src={img.src} alt={img.alt} width="320" height="460" className="lum-gar-img" loading={i === 0 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'low'} onError={(e) => {
                     const el = e.target as HTMLImageElement;
                     el.style.display = 'none';
                   }}
                 />
-              </motion.div>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      <button
-        className="lum-gar-arrow lum-gar-prev"
-        onClick={scrollPrev}
-        aria-label="Imagen anterior"
-      >
+      <button className="lum-gar-arrow lum-gar-prev" onClick={scrollPrev} aria-label="Imagen anterior" >
         &#9664;
       </button>
-      <button
-        className="lum-gar-arrow lum-gar-next"
-        onClick={scrollNext}
-        aria-label="Imagen siguiente"
-      >
+      <button className="lum-gar-arrow lum-gar-next" onClick={scrollNext} aria-label="Imagen siguiente" >
         &#9654;
       </button>
 
       <div className="lum-gar-dots">
         {images.map((_, i) => (
-          <button
-            key={i}
-            className={`lum-gar-dot ${i === selectedIndex ? 'lum-gar-dot-active' : ''}`}
-            onClick={() => scrollTo(i)}
+          <button key={i} className={`lum-gar-dot ${i === selectedIndex ? 'lum-gar-dot-active' : ''}`} onClick={() => scrollTo(i)}
             aria-label={`Ir a imagen ${i + 1}`}
           />
         ))}

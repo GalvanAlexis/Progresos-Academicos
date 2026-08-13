@@ -19,10 +19,7 @@ export default function Newsletter() {
               <p className="lum-newsletter-code">
                 LUMINA10
               </p>
-              <button
-                type="button"
-                className="lum-newsletter-btn"
-                onClick={() => setSent(false)}
+              <button type="button" className="lum-newsletter-btn" onClick={() => setSent(false)}
               >
                 Volver
               </button>
@@ -34,18 +31,11 @@ export default function Newsletter() {
                 Suscribite a nuestro newsletter y recibi consejos de cuidado facial, lanzamientos exclusivos y descuentos especiales.
               </p>
               <div className="lum-newsletter-form">
-                <input
-                  type="email"
-                  defaultValue="ejemplo@correo.com"
-                  className="lum-newsletter-input"
-                  onFocus={(e) => {
+                <input type="email" defaultValue="ejemplo@correo.com" className="lum-newsletter-input" onFocus={(e) => {
                     if (e.target.value === 'ejemplo@correo.com') e.target.select();
                   }}
                 />
-                <button
-                  type="button"
-                  className="lum-newsletter-btn"
-                  onClick={() => setSent(true)}
+                <button type="button" className="lum-newsletter-btn" onClick={() => setSent(true)}
                 >
                   Quiero mi descuento
                 </button>
