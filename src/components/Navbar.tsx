@@ -5,12 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAppContext } from '@/lib/AppContext';
 
-interface NavbarProps {
-  onToggleSidebar: () => void;
-  sidebarOpen: boolean;
-}
-
-export default function Navbar({ onToggleSidebar, sidebarOpen }: NavbarProps) {
+export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { theme, toggleTheme } = useAppContext();
@@ -42,14 +37,12 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }: NavbarProps) {
         {/* Izquierda: hamburger + logo */}
         <div className="flex items-center gap-4">
 
-          {/* Hamburger animado */}
+          {/* Hamburger minimalista nativo */}
           <button
-            id="sidebar-toggle"
-            onClick={onToggleSidebar}
-            className="p-1 rounded"
-            title={sidebarOpen ? 'Cerrar panel' : 'Abrir panel'}
-            aria-label="Toggle sidebar"
-            aria-expanded={sidebarOpen}
+            popoverTarget="mobile-menu"
+            className="p-1 rounded sm:hidden"
+            title="Abrir menú"
+            aria-label="Toggle mobile menu"
             style={{
               background: 'transparent',
               border: 'none',
@@ -57,45 +50,19 @@ export default function Navbar({ onToggleSidebar, sidebarOpen }: NavbarProps) {
               color: 'var(--muted)',
               width: '24px',
               height: '24px',
-              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               transition: 'color 0.2s',
             }}
             onMouseEnter={e => { e.currentTarget.style.color = 'var(--foreground)'; }}
             onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; }}
           >
-            <span style={{
-              position: 'absolute',
-              left: '3px',
-              top: sidebarOpen ? '11px' : '5px',
-              width: '18px',
-              height: '2px',
-              borderRadius: '1px',
-              background: 'currentColor',
-              transform: sidebarOpen ? 'rotate(45deg)' : 'none',
-              transition: 'all 0.25s ease',
-            }} />
-            <span style={{
-              position: 'absolute',
-              left: '3px',
-              top: '11px',
-              width: '18px',
-              height: '2px',
-              borderRadius: '1px',
-              background: 'currentColor',
-              opacity: sidebarOpen ? 0 : 1,
-              transition: 'all 0.2s ease',
-            }} />
-            <span style={{
-              position: 'absolute',
-              left: '3px',
-              top: sidebarOpen ? '11px' : '17px',
-              width: '18px',
-              height: '2px',
-              borderRadius: '1px',
-              background: 'currentColor',
-              transform: sidebarOpen ? 'rotate(-45deg)' : 'none',
-              transition: 'all 0.25s ease',
-            }} />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
           </button>
 
           {/* Logotipo */}
