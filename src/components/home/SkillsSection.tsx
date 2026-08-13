@@ -1,11 +1,7 @@
 "use client";
 
-/**
- * SkillsSection — ISS-051
- * 3 áreas técnicas principales con interactividad de expansión.
- */
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { flushSync } from 'react-dom';
 
 const SKILL_AREAS = [
   {
@@ -42,6 +38,19 @@ const SKILL_AREAS = [
 
 export default function SkillsSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const toggleSkill = (id: string | null) => {
+    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!(document as any).startViewTransition || isReducedMotion) {
+      setSelectedId(id);
+      return;
+    }
+    (document as any).startViewTransition(() => {
+      flushSync(() => {
+        setSelectedId(id);
+      });
+    });
+  };
 
   return (
     <section
@@ -95,245 +104,268 @@ export default function SkillsSection() {
             columnGap: '20px',
           }}
         >
-          {SKILL_AREAS.map((area) => (
-            <motion.article
-              key={area.id}
-              layoutId={`skill-card-${area.id}`}
-              onClick={() => setSelectedId(area.id)}
-              className="skill-card reveal"
-              style={{ cursor: 'pointer', breakInside: 'avoid', marginBottom: '20px', display: 'inline-block', width: '100%' }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {/* Icono */}
-              <motion.div
-                layoutId={`skill-icon-${area.id}`}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '8px',
-                  background: 'var(--accent-dim)',
-                  border: '1px solid rgba(225,29,72,0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '18px',
-                  color: 'var(--accent)',
-                  marginBottom: '16px',
-                  userSelect: 'none',
-                }}
-                aria-hidden="true"
-              >
-                {area.icon}
-              </motion.div>
+          {SKILL_AREAS.map((area) => {
+            const isSelected = selectedId === area.id;
 
-              <motion.h3
-                layoutId={`skill-title-${area.id}`}
-                style={{
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  color: 'var(--foreground)',
-                  marginBottom: '10px',
-                  letterSpacing: '-0.01em',
+            return (
+              <article
+                key={area.id}
+                onClick={() => toggleSkill(area.id)}
+                className="skill-card reveal"
+                style={{ 
+                  cursor: 'pointer', 
+                  breakInside: 'avoid', 
+                  marginBottom: '20px', 
+                  display: 'inline-block', 
+                  width: '100%',
+                  transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
+                  viewTransitionName: isSelected ? "skill-card" : "none",
+                  visibility: isSelected ? "hidden" : "visible",
                 }}
-              >
-                {area.title}
-              </motion.h3>
-              
-              <motion.p
-                layoutId={`skill-desc-${area.id}`}
-                style={{
-                  fontSize: '13px',
-                  color: 'var(--muted-light)',
-                  lineHeight: 1.7,
-                  marginBottom: '16px',
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.12)";
+                  e.currentTarget.style.borderColor = "var(--accent)";
                 }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = "var(--border)";
+                }}
+                onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.98)"; }}
+                onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1.02)"; }}
               >
-                {area.desc}
-              </motion.p>
-
-              {/* Potency meter */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                style={{ marginBottom: '14px' }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px', color: 'var(--muted)' }}>
-                  <span>Competencia</span>
+                {/* Icono */}
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '8px',
+                    background: 'var(--accent-dim)',
+                    border: '1px solid rgba(225,29,72,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px',
+                    color: 'var(--accent)',
+                    marginBottom: '16px',
+                    userSelect: 'none',
+                    viewTransitionName: isSelected ? "skill-icon" : "none",
+                  }}
+                  aria-hidden="true"
+                >
+                  {area.icon}
                 </div>
-                <div style={{ height: '4px', background: 'var(--surface-2)', borderRadius: '99px', overflow: 'hidden' }}>
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${area.potency}%` }}
-                    viewport={{ once: true, margin: '-40px' }}
-                    transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
-                    style={{ height: '100%', borderRadius: '99px', background: `linear-gradient(90deg, ${area.color}, ${area.color}88)` }}
-                  />
-                </div>
-              </motion.div>
 
-              {/* Tags */}
-              <motion.div layoutId={`skill-tags-${area.id}`} style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {area.tags.map((tag) => (
-                  <span key={tag} className="tech-badge" style={{ fontSize: '10px', padding: '2px 8px' }}>
-                    {tag}
-                  </span>
-                ))}
-              </motion.div>
-            </motion.article>
-          ))}
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 600,
+                    color: 'var(--foreground)',
+                    marginBottom: '10px',
+                    letterSpacing: '-0.01em',
+                    viewTransitionName: isSelected ? "skill-title" : "none",
+                  }}
+                >
+                  {area.title}
+                </h3>
+                
+                <p
+                  style={{
+                    fontSize: '13px',
+                    color: 'var(--muted-light)',
+                    lineHeight: 1.7,
+                    marginBottom: '16px',
+                    viewTransitionName: isSelected ? "skill-desc" : "none",
+                  }}
+                >
+                  {area.desc}
+                </p>
+
+                {/* Potency meter */}
+                <div
+                  style={{ marginBottom: '14px' }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '4px', color: 'var(--muted)' }}>
+                    <span>Competencia</span>
+                  </div>
+                  <div style={{ height: '4px', background: 'var(--surface-2)', borderRadius: '99px', overflow: 'hidden' }}>
+                    <div
+                      style={{ 
+                        height: '100%', 
+                        borderRadius: '99px', 
+                        background: `linear-gradient(90deg, ${area.color}, ${area.color}88)`,
+                        width: `${area.potency}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  gap: '6px',
+                  viewTransitionName: isSelected ? "skill-tags" : "none",
+                }}>
+                  {area.tags.map((tag) => (
+                    <span key={tag} className="tech-badge" style={{ fontSize: '10px', padding: '2px 8px' }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
 
       {/* Expanded Modal */}
-      <AnimatePresence>
-        {selectedId && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
+      {selectedId && (
+        <>
+          <div
+            onClick={() => toggleSkill(null)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'var(--overlay-bg)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 100,
+              viewTransitionName: "skill-overlay",
+            }}
+          />
+          {SKILL_AREAS.map(area => area.id === selectedId && (
+            <div
+              key={`modal-${area.id}`}
               style={{
                 position: 'fixed',
                 inset: 0,
-                background: 'var(--overlay-bg)',
-                backdropFilter: 'blur(4px)',
-                zIndex: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 101,
+                padding: '20px',
+                pointerEvents: 'none',
               }}
-            />
-            {SKILL_AREAS.map(area => area.id === selectedId && (
-              <div
-                key={`modal-${area.id}`}
+            >
+              <article
+                role="dialog"
+                aria-modal="true"
+                aria-label={area.title}
                 style={{
-                  position: 'fixed',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 101,
-                  padding: '20px',
-                  pointerEvents: 'none',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderTop: '2px solid var(--accent)',
+                  borderRadius: '12px',
+                  padding: '32px',
+                  width: '100%',
+                  maxWidth: '500px',
+                  maxHeight: '85vh',
+                  overflowY: 'auto',
+                  boxShadow: 'var(--card-shadow-lg)',
+                  pointerEvents: 'auto',
+                  position: 'relative',
+                  cursor: 'pointer',
+                  viewTransitionName: "skill-card",
                 }}
+                onClick={() => toggleSkill(null)}
               >
-                <motion.article
-                  role="dialog"
-                  aria-modal="true"
-                  aria-label={area.title}
-                  layoutId={`skill-card-${area.id}`}
+                <div
                   style={{
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border)',
-                    borderTop: '2px solid var(--accent)',
-                    borderRadius: '12px',
-                    padding: '32px',
-                    width: '100%',
-                    maxWidth: '500px',
-                    maxHeight: '85vh',
-                    overflowY: 'auto',
-                    boxShadow: 'var(--card-shadow-lg)',
-                    pointerEvents: 'auto',
-                    position: 'relative',
-                    cursor: 'pointer',
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '8px',
+                    background: 'var(--accent-dim)',
+                    border: '1px solid rgba(225,29,72,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px',
+                    color: 'var(--accent)',
+                    marginBottom: '20px',
+                    viewTransitionName: "skill-icon",
                   }}
-                  onClick={() => setSelectedId(null)}
                 >
-                  <motion.div
-                    layoutId={`skill-icon-${area.id}`}
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '8px',
-                      background: 'var(--accent-dim)',
-                      border: '1px solid rgba(225,29,72,0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '24px',
-                      color: 'var(--accent)',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    {area.icon}
-                  </motion.div>
+                  {area.icon}
+                </div>
 
-                  <motion.h3
-                    layoutId={`skill-title-${area.id}`}
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: 700,
-                      color: 'var(--foreground)',
-                      marginBottom: '12px',
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {area.title}
-                  </motion.h3>
+                <h3
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 700,
+                    color: 'var(--foreground)',
+                    marginBottom: '12px',
+                    letterSpacing: '-0.02em',
+                    viewTransitionName: "skill-title",
+                  }}
+                >
+                  {area.title}
+                </h3>
 
-                  <motion.p
-                    layoutId={`skill-desc-${area.id}`}
-                    style={{
-                      fontSize: '14px',
-                      color: 'var(--muted-light)',
-                      lineHeight: 1.6,
-                      marginBottom: '24px',
-                    }}
-                  >
-                    {area.desc}
-                  </motion.p>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    color: 'var(--muted-light)',
+                    lineHeight: 1.6,
+                    marginBottom: '24px',
+                    viewTransitionName: "skill-desc",
+                  }}
+                >
+                  {area.desc}
+                </p>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    style={{
-                      background: 'var(--surface-2)',
-                      padding: '16px',
-                      borderRadius: '8px',
-                      marginBottom: '24px',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <h4 style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: '8px', fontWeight: 600 }}>Detalle de experiencia</h4>
-                    <p style={{ fontSize: '14px', color: 'var(--foreground-2)', lineHeight: 1.7 }}>
-                      {area.details}
-                    </p>
-                  </motion.div>
+                <div
+                  style={{
+                    background: 'var(--surface-2)',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    marginBottom: '24px',
+                    border: '1px solid var(--border)',
+                    viewTransitionName: "skill-details-box",
+                  }}
+                >
+                  <h4 style={{ fontSize: '12px', textTransform: 'uppercase', color: 'var(--accent)', letterSpacing: '0.1em', marginBottom: '8px', fontWeight: 600 }}>
+                    Detalle de experiencia
+                  </h4>
+                  <p style={{ fontSize: '14px', color: 'var(--foreground-2)', lineHeight: 1.7 }}>
+                    {area.details}
+                  </p>
+                </div>
 
-                  {/* Potency meter en modal */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    style={{ marginBottom: '20px' }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px', color: 'var(--muted)' }}>
-                      <span>Nivel de competencia</span>
-                    </div>
-                    <div style={{ height: '6px', background: 'var(--surface-2)', borderRadius: '99px', overflow: 'hidden' }}>
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${area.potency}%` }}
-                        transition={{ duration: 1, ease: 'easeOut', delay: 0.4 }}
-                        style={{ height: '100%', borderRadius: '99px', background: `linear-gradient(90deg, ${area.color}, ${area.color}88)` }}
-                      />
-                    </div>
-                  </motion.div>
+                {/* Potency meter en modal */}
+                <div style={{ marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px', color: 'var(--muted)' }}>
+                    <span>Nivel de competencia</span>
+                  </div>
+                  <div style={{ height: '6px', background: 'var(--surface-2)', borderRadius: '99px', overflow: 'hidden' }}>
+                    <div
+                      style={{ 
+                        height: '100%', 
+                        borderRadius: '99px', 
+                        background: `linear-gradient(90deg, ${area.color}, ${area.color}88)`,
+                        width: `${area.potency}%`,
+                      }}
+                    />
+                  </div>
+                </div>
 
-                  <motion.div layoutId={`skill-tags-${area.id}`} style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {area.tags.map((tag) => (
-                      <span key={tag} className="tech-badge" style={{ fontSize: '12px', padding: '4px 10px' }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </motion.div>
-                </motion.article>
-              </div>
-            ))}
-          </>
-        )}
-      </AnimatePresence>
+                <div style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  gap: '8px',
+                  viewTransitionName: "skill-tags",
+                }}>
+                  {area.tags.map((tag) => (
+                    <span key={tag} className="tech-badge" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            </div>
+          ))}
+        </>
+      )}
     </section>
   );
 }
