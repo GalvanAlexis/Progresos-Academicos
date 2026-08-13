@@ -7,6 +7,7 @@
  */
 import React, { useState, useRef, useEffect } from "react";
 import { flushSync } from "react-dom";
+import useEmblaCarousel from "embla-carousel-react";
 
 const SERVICES = [
   {
@@ -103,6 +104,7 @@ const SERVICES = [
 export default function ServicesSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [emblaRef] = useEmblaCarousel({ loop: true, align: "start", dragFree: true });
 
   useEffect(() => {
     if (selectedId) {
@@ -200,29 +202,44 @@ export default function ServicesSection() {
           ¿Cómo te puedo ayudar?
         </h2>
 
-        {/* Grid de Servicios */}
+        {/* Carrusel Infinito de Servicios */}
         <div
+          ref={emblaRef}
           style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
-            gap: "24px",
+            overflow: "hidden",
+            width: "100%",
+            cursor: "grab",
+            padding: "20px 0",
+            margin: "-20px 0",
           }}
+          onMouseDown={(e) => { e.currentTarget.style.cursor = "grabbing"; }}
+          onMouseUp={(e) => { e.currentTarget.style.cursor = "grab"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.cursor = "grab"; }}
         >
-          {SERVICES.map((srv) => {
-            const isSelected = selectedId === srv.id;
-            // Para el grid original, solo asignamos el nombre de transicion al seleccionado justo antes de mutar
-            return (
-              <article
-                key={srv.id}
-                onClick={() => toggleService(srv.id)}
-                className="reveal"
-                style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "12px",
-                  padding: "32px 28px",
-                  cursor: "pointer",
+          <div
+            style={{
+              display: "flex",
+              touchAction: "pan-y pinch-zoom",
+              backfaceVisibility: "hidden",
+            }}
+          >
+            {SERVICES.map((srv) => {
+              const isSelected = selectedId === srv.id;
+              // Asignamos el nombre de transicion al seleccionado justo antes de mutar
+              return (
+                <article
+                  key={srv.id}
+                  onClick={() => toggleService(srv.id)}
+                  className="reveal"
+                  style={{
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "12px",
+                    padding: "32px 28px",
+                    flex: "0 0 clamp(280px, 85%, 380px)",
+                    marginRight: "24px",
+                    minWidth: "0",
+                    cursor: "pointer",
                   transition: "transform 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s",
                   viewTransitionName: isSelected ? "service-card" : "none",
                   // Si el modal esta abierto para ESTE servicio, lo ocultamos visualmente en el grid (ya que está en el modal)
@@ -321,6 +338,7 @@ export default function ServicesSection() {
           })}
         </div>
       </div>
+    </div>
 
       {/* Expanded Modal */}
       {selectedId && (
