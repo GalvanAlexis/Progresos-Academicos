@@ -228,6 +228,26 @@ export default function SkillsSection() {
           })}
           </div>
         </div>
+
+        {/* Navigation Dots */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', gap: '8px' }}>
+          {scrollSnaps.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => emblaApi && emblaApi.scrollTo(index)}
+              style={{
+                width: selectedIndex === index ? '24px' : '8px',
+                height: '8px',
+                borderRadius: '4px',
+                background: selectedIndex === index ? 'var(--accent)' : 'var(--surface-2)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              aria-label={`Ir al slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Expanded Modal */}
