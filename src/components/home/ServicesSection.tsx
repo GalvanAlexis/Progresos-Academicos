@@ -6,7 +6,7 @@
  * con expansión a través de layoutId de framer-motion.
  */
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { flushSync } from "react-dom";
 
 const SERVICES = [
   {
@@ -112,6 +112,19 @@ export default function ServicesSection() {
     }
   }, [selectedId]);
 
+  const toggleService = (id: string | null) => {
+    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!(document as any).startViewTransition || isReducedMotion) {
+      setSelectedId(id);
+      return;
+    }
+    (document as any).startViewTransition(() => {
+      flushSync(() => {
+        setSelectedId(id);
+      });
+    });
+  };
+
   return (
     <section
       id="servicios"
@@ -196,294 +209,306 @@ export default function ServicesSection() {
             gap: "24px",
           }}
         >
-          {SERVICES.map((srv) => (
-            <motion.article
-              key={srv.id}
-              layoutId={`service-card-${srv.id}`}
-              onClick={() => setSelectedId(srv.id)}
-              className="reveal"
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "12px",
-                padding: "32px 28px",
-                cursor: "pointer",
-              }}
-              whileHover={{
-                scale: 1.02,
-                borderColor: "var(--accent)",
-                boxShadow: "0 12px 40px rgba(225,29,72,0.15)",
-              }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {/* Icon */}
-              <motion.div
-                layoutId={`service-icon-${srv.id}`}
+          {SERVICES.map((srv) => {
+            const isSelected = selectedId === srv.id;
+            // Para el grid original, solo asignamos el nombre de transicion al seleccionado justo antes de mutar
+            return (
+              <article
+                key={srv.id}
+                onClick={() => toggleService(srv.id)}
+                className="reveal"
                 style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "10px",
-                  background: "var(--accent-dim)",
-                  color: "var(--accent)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: "24px",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "12px",
+                  padding: "32px 28px",
+                  cursor: "pointer",
+                  transition: "transform 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s",
+                  viewTransitionName: isSelected ? "service-card" : "none",
+                  // Si el modal esta abierto para ESTE servicio, lo ocultamos visualmente en el grid (ya que está en el modal)
+                  visibility: isSelected ? "hidden" : "visible", 
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.borderColor = "var(--accent)";
+                  e.currentTarget.style.boxShadow = "0 12px 40px rgba(225,29,72,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+                onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.98)"; }}
+                onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1.02)"; }}
               >
-                {srv.icon}
-              </motion.div>
+                {/* Icon */}
+                <div
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "10px",
+                    background: "var(--accent-dim)",
+                    color: "var(--accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginBottom: "24px",
+                    viewTransitionName: isSelected ? "service-icon" : "none",
+                  }}
+                >
+                  {srv.icon}
+                </div>
 
-              <motion.h3
-                layoutId={`service-title-${srv.id}`}
-                style={{
-                  fontSize: "20px",
-                  fontWeight: 700,
-                  color: "var(--foreground)",
-                  margin: "0 0 4px 0",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  flexWrap: "wrap",
-                }}
-              >
-                {srv.title}
-                {srv.localOnly && (
-                  <span
-                    style={{
-                      fontSize: "9px",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "var(--accent)",
-                      border: "1px solid var(--accent)",
-                      borderRadius: "4px",
-                      padding: "2px 8px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Exclusivo Chascomus
-                  </span>
-                )}
-              </motion.h3>
+                <h3
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 700,
+                    color: "var(--foreground)",
+                    margin: "0 0 4px 0",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    flexWrap: "wrap",
+                    width: "fit-content",
+                    viewTransitionName: isSelected ? "service-title" : "none",
+                  }}
+                >
+                  {srv.title}
+                  {srv.localOnly && (
+                    <span
+                      style={{
+                        fontSize: "9px",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        color: "var(--accent)",
+                        border: "1px solid var(--accent)",
+                        borderRadius: "4px",
+                        padding: "2px 8px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Exclusivo Chascomus
+                    </span>
+                  )}
+                </h3>
 
-              <motion.p
-                layoutId={`service-subtitle-${srv.id}`}
-                style={{
-                  fontSize: "13px",
-                  color: "var(--accent)",
-                  fontWeight: 500,
-                  margin: "0 0 16px 0",
-                }}
-              >
-                {srv.subtitle}
-              </motion.p>
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: "var(--accent)",
+                    fontWeight: 500,
+                    margin: "0 0 16px 0",
+                    width: "fit-content",
+                    viewTransitionName: isSelected ? "service-subtitle" : "none",
+                  }}
+                >
+                  {srv.subtitle}
+                </p>
 
-              <motion.p
-                layoutId={`service-desc-${srv.id}`}
-                style={{
-                  fontSize: "14px",
-                  lineHeight: 1.6,
-                  color: "var(--foreground-2)",
-                  margin: 0,
-                }}
-              >
-                {srv.desc}
-              </motion.p>
-            </motion.article>
-          ))}
+                <p
+                  style={{
+                    fontSize: "14px",
+                    lineHeight: 1.6,
+                    color: "var(--foreground-2)",
+                    margin: 0,
+                    viewTransitionName: isSelected ? "service-desc" : "none",
+                  }}
+                >
+                  {srv.desc}
+                </p>
+              </article>
+            );
+          })}
         </div>
       </div>
 
       {/* Expanded Modal */}
-      <AnimatePresence>
-        {selectedId && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
-              style={{
-                position: "fixed",
-                inset: 0,
-                background: "var(--overlay-bg)",
-                backdropFilter: "blur(4px)",
-                zIndex: 100,
-              }}
-            />
-            {SERVICES.map(
-              (srv) =>
-                srv.id === selectedId && (
-                  <div
-                    key={`modal-srv-${srv.id}`}
+      {selectedId && (
+        <>
+          <div
+            onClick={() => toggleService(null)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "var(--overlay-bg)",
+              backdropFilter: "blur(4px)",
+              zIndex: 100,
+              viewTransitionName: "service-overlay",
+            }}
+          />
+          {SERVICES.map(
+            (srv) =>
+              srv.id === selectedId && (
+                <div
+                  key={`modal-srv-${srv.id}`}
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 101,
+                    padding: "20px",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <article
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={srv.title}
                     style={{
-                      position: "fixed",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      zIndex: 101,
-                      padding: "20px",
-                      pointerEvents: "none",
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderTop: "2px solid var(--accent)",
+                      borderRadius: "12px",
+                      padding: "32px",
+                      width: "100%",
+                      maxWidth: "540px",
+                      boxShadow: "var(--card-shadow-lg)",
+                      pointerEvents: "auto",
+                      position: "relative",
+                      viewTransitionName: "service-card",
                     }}
                   >
-                    <motion.article
-                      role="dialog"
-                      aria-modal="true"
-                      aria-label={srv.title}
-                      layoutId={`service-card-${srv.id}`}
+                    <button
+                      onClick={() => toggleService(null)}
                       style={{
-                        background: "var(--surface)",
-                        border: "1px solid var(--border)",
-                        borderTop: "2px solid var(--accent)",
-                        borderRadius: "12px",
-                        padding: "32px",
-                        width: "100%",
-                        maxWidth: "540px",
-                        boxShadow: "var(--card-shadow-lg)",
-                        pointerEvents: "auto",
-                        position: "relative",
+                        position: "absolute",
+                        top: "16px",
+                        right: "16px",
+                        background: "transparent",
+                        border: "none",
+                        color: "var(--muted)",
+                        cursor: "pointer",
+                        padding: "8px",
+                        fontSize: "14px",
                       }}
                     >
-                      <button
-                        onClick={() => setSelectedId(null)}
-                        style={{
-                          position: "absolute",
-                          top: "16px",
-                          right: "16px",
-                          background: "transparent",
-                          border: "none",
-                          color: "var(--muted)",
-                          cursor: "pointer",
-                          padding: "8px",
-                          fontSize: "14px",
-                        }}
-                      >
-                        ✕
-                      </button>
+                      ✕
+                    </button>
 
-                      <motion.div
-                        layoutId={`service-icon-${srv.id}`}
-                        style={{
-                          width: "56px",
-                          height: "56px",
-                          borderRadius: "12px",
-                          background: "var(--accent-dim)",
-                          color: "var(--accent)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginBottom: "20px",
-                        }}
-                      >
-                        {srv.icon}
-                      </motion.div>
+                    <div
+                      style={{
+                        width: "56px",
+                        height: "56px",
+                        borderRadius: "12px",
+                        background: "var(--accent-dim)",
+                        color: "var(--accent)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "20px",
+                        viewTransitionName: "service-icon",
+                      }}
+                    >
+                      {srv.icon}
+                    </div>
 
-                      <motion.h3
-                        layoutId={`service-title-${srv.id}`}
-                        style={{
-                          fontSize: "28px",
-                          fontWeight: 700,
-                          color: "var(--foreground)",
-                          margin: "0 0 6px 0",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "10px",
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        {srv.title}
-                        {srv.localOnly && (
-                          <span
-                            style={{
-                              fontSize: "10px",
-                              letterSpacing: "0.1em",
-                              textTransform: "uppercase",
-                              color: "var(--accent)",
-                              border: "1px solid var(--accent)",
-                              borderRadius: "4px",
-                              padding: "3px 10px",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Exclusivo Chascomus
-                          </span>
-                        )}
-                      </motion.h3>
-
-                      <motion.p
-                        layoutId={`service-subtitle-${srv.id}`}
-                        style={{
-                          fontSize: "14px",
-                          color: "var(--accent)",
-                          fontWeight: 600,
-                          margin: "0 0 20px 0",
-                        }}
-                      >
-                        {srv.subtitle}
-                      </motion.p>
-
-                      <motion.p
-                        layoutId={`service-desc-${srv.id}`}
-                        style={{
-                          fontSize: "15px",
-                          lineHeight: 1.6,
-                          color: "var(--foreground-2)",
-                          margin: "0 0 24px 0",
-                          fontWeight: 500,
-                        }}
-                      >
-                        {srv.desc}
-                      </motion.p>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        style={{
-                          background: "var(--surface-2)",
-                          padding: "20px",
-                          borderRadius: "8px",
-                          marginBottom: "24px",
-                          border: "1px solid var(--border-subtle)",
-                        }}
-                      >
-                        <p
+                    <h3
+                      style={{
+                        fontSize: "28px",
+                        fontWeight: 700,
+                        color: "var(--foreground)",
+                        margin: "0 0 6px 0",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        flexWrap: "wrap",
+                        width: "fit-content",
+                        viewTransitionName: "service-title",
+                      }}
+                    >
+                      {srv.title}
+                      {srv.localOnly && (
+                        <span
                           style={{
-                            fontSize: "15px",
-                            color: "var(--foreground-2)",
-                            lineHeight: 1.8,
-                            margin: 0,
+                            fontSize: "10px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: "var(--accent)",
+                            border: "1px solid var(--accent)",
+                            borderRadius: "4px",
+                            padding: "3px 10px",
+                            fontWeight: 600,
                           }}
                         >
-                          {srv.details}
-                        </p>
-                      </motion.div>
+                          Exclusivo Chascomus
+                        </span>
+                      )}
+                    </h3>
 
-                      <motion.div
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        color: "var(--accent)",
+                        fontWeight: 600,
+                        margin: "0 0 20px 0",
+                        width: "fit-content",
+                        viewTransitionName: "service-subtitle",
+                      }}
+                    >
+                      {srv.subtitle}
+                    </p>
+
+                    <p
+                      style={{
+                        fontSize: "15px",
+                        lineHeight: 1.6,
+                        color: "var(--foreground-2)",
+                        margin: "0 0 24px 0",
+                        fontWeight: 500,
+                        viewTransitionName: "service-desc",
+                      }}
+                    >
+                      {srv.desc}
+                    </p>
+
+                    <div
+                      style={{
+                        background: "var(--surface-2)",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        marginBottom: "24px",
+                        border: "1px solid var(--border-subtle)",
+                        viewTransitionName: "service-details-box",
+                      }}
+                    >
+                      <p
                         style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "8px",
+                          fontSize: "15px",
+                          color: "var(--foreground-2)",
+                          lineHeight: 1.8,
+                          margin: 0,
                         }}
                       >
-                        {srv.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="tech-badge"
-                            style={{ fontSize: "12px", padding: "4px 10px" }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </motion.div>
-                    </motion.article>
-                  </div>
-                ),
-            )}
-          </>
-        )}
-      </AnimatePresence>
+                        {srv.details}
+                      </p>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "8px",
+                        viewTransitionName: "service-tags",
+                      }}
+                    >
+                      {srv.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="tech-badge"
+                          style={{ fontSize: "12px", padding: "4px 10px" }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                </div>
+              ),
+          )}
+        </>
+      )}
     </section>
   );
 }
