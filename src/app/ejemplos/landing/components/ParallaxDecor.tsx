@@ -9,7 +9,7 @@ const LAYERS = [
 
 export default function ParallaxDecor() {
   return (
-    <div aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+    <div aria-hidden="true" >
       <style>{`
         @supports (animation-timeline: scroll()) {
           @media (prefers-reduced-motion: no-preference) {
@@ -25,21 +25,7 @@ export default function ParallaxDecor() {
         }
       `}</style>
       {LAYERS.map((l, i) => (
-        <div
-          key={i}
-          className="lum-parallax-layer"
-          style={{
-            position: 'absolute',
-            width: l.size,
-            height: l.size,
-            borderRadius: '50%',
-            background: `radial-gradient(circle, ${l.color} 0%, transparent 70%)`,
-            filter: `blur(${l.blur}px)`,
-            left: l.left,
-            top: l.top,
-            ['--speed' as string]: `${l.speed}%`,
-          }}
-        />
+        <div key={i} className="lum-parallax-layer" style={{ position: 'absolute', width: l.size, height: l.size, borderRadius: '50%', background: `radial-gradient(circle, ${l.color} 0%, transparent 70%)`, filter: `blur(${l.blur}px)`, left: l.left, top: l.top, ['--speed' as string]: `${l.speed}%`, }} />
       ))}
     </div>
   );

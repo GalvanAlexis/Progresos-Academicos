@@ -66,16 +66,6 @@ export default function ScrollBackground() {
   const bg = colors[activeIndex] || colors[0];
 
   return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: -1,
-        backgroundColor: bg,
-        transition: reduced ? 'none' : 'background-color 0.8s ease',
-        willChange: 'background-color',
-      }}
-    />
+    <div aria-hidden="true" />
   );
 }

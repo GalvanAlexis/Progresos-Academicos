@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../hooks/useAdmin';
 
 interface Props {
@@ -36,35 +35,11 @@ export default function Cart({ open, onClose }: Props) {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {open && (
         <>
-          <motion.div
-            key="cart-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={status === 'success' ? undefined : onClose}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 200,
-              background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-            }}
-          />
-          <motion.aside
-            key="cart-panel"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            style={{
-              position: 'fixed', top: 0, right: 0, bottom: 0,
-              width: 'min(85vw, 400px)',
-              zIndex: 201,
-              background: 'var(--lum-bg)',
-              display: 'flex', flexDirection: 'column',
-              boxShadow: '-8px 0 32px rgba(0,0,0,0.15)',
-            }}
-          >
+          <div key="cart-overlay" onClick={status === 'success' ? undefined : onClose} />
+          <aside key="cart-panel" >
             {status === 'success' ? (
               <div className="lum-cart-success">
                 <div className="lum-cart-check">&#10003;</div>
@@ -75,7 +50,7 @@ export default function Cart({ open, onClose }: Props) {
                 <div className="lum-cart-success-details">
                   <span>Pago ID: MP-{String(Math.floor(Math.random() * 90000000) + 10000000)}</span>
                   <span>Medio: Mercado Pago</span>
-                  <span style={{ fontWeight: 700, fontSize: 18, color: 'var(--lum-primary)' }}>
+                  <span>
                     Total: ${total.toLocaleString('es-AR')}
                   </span>
                 </div>
@@ -87,7 +62,7 @@ export default function Cart({ open, onClose }: Props) {
               <div className="lum-cart-paying">
                 <div className="lum-cart-spinner" />
                 <p>Procesando pago con Mercado Pago...</p>
-                <p style={{ fontSize: 13, opacity: 0.6, marginTop: 4 }}>
+                <p>
                   No cierres esta ventana
                 </p>
               </div>
@@ -103,13 +78,7 @@ export default function Cart({ open, onClose }: Props) {
                 <div className="lum-cart-body">
                   <div className="lum-cart-item">
                     <div className="lum-cart-item-img-wrap">
-                      <img
-                        src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=120&q=80"
-                        alt="Lumina Serum"
-                        width="64"
-                        height="90"
-                        className="lum-cart-item-img"
-                      />
+                      <img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=120&q=80" alt="Lumina Serum" width="64" height="90" className="lum-cart-item-img" />
                     </div>
                     <div className="lum-cart-item-info">
                       <p className="lum-cart-item-name">Lumina Serum Facial</p>
@@ -133,10 +102,7 @@ export default function Cart({ open, onClose }: Props) {
                   )}
 
                   <label className="lum-cart-addon">
-                    <input
-                      type="checkbox"
-                      checked={hasAddon}
-                      onChange={() => setHasAddon(!hasAddon)}
+                    <input type="checkbox" checked={hasAddon} onChange={() => setHasAddon(!hasAddon)}
                       className="lum-cart-checkbox"
                     />
                     <div>
@@ -171,10 +137,7 @@ export default function Cart({ open, onClose }: Props) {
                     </div>
                   </div>
 
-                  <button
-                    className="lum-btn lum-btn-primary lum-cart-checkout"
-                    onClick={handleCheckout}
-                  >
+                  <button className="lum-btn lum-btn-primary lum-cart-checkout" onClick={handleCheckout} >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
                       <line x1="1" y1="10" x2="23" y2="10" />
@@ -188,9 +151,9 @@ export default function Cart({ open, onClose }: Props) {
                 </div>
               </div>
             )}
-          </motion.aside>
+          </aside>
         </>
       )}
-    </AnimatePresence>
+    </>
   );
 }

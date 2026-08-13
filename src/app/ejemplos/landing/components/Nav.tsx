@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
 
@@ -72,55 +71,19 @@ export default function Nav() {
 
   const panel = open ? (
     <>
-      <motion.div
-        key="nav-overlay"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={close}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 999998,
-          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-        }}
-      />
-      <motion.nav
-        key="nav-panel"
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        style={{
-          position: 'fixed', top: 0, right: 0, bottom: 0,
-          width: 'min(75vw, 300px)',
-          zIndex: 999999,
-          background: 'var(--lum-bg)',
-          display: 'flex', flexDirection: 'column',
-          padding: '56px 32px 32px',
-          boxShadow: '-8px 0 32px rgba(0,0,0,0.15)',
-        }}
-      >
+      <div key="nav-overlay" onClick={close} />
+      <nav key="nav-panel" >
         {NAV_ITEMS.map((item, i) => (
-          <motion.a
-            key={item.label}
-            href={item.href}
-            className="lum-scroll-link lum-mobile-link"
-            onClick={(e) => handleLinkClick(e, item.href)}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.07, type: 'spring', stiffness: 300, damping: 25 }}
+          <a key={item.label} href={item.href} className="lum-scroll-link lum-mobile-link" onClick={(e) => handleLinkClick(e, item.href)}
+            
+            
+            
           >
             {item.label}
-          </motion.a>
+          </a>
         ))}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
-          style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}
-        >
-          <button
-            className="lum-mobile-admin"
-            onClick={() => { setOpen(false); setShowLogin(true); }}
+        <div>
+          <button className="lum-mobile-admin" onClick={() => { setOpen(false); setShowLogin(true); }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
@@ -133,8 +96,8 @@ export default function Nav() {
             </svg>
             <span>Modo oscuro</span>
           </button>
-        </motion.div>
-      </motion.nav>
+        </div>
+      </nav>
     </>
   ) : null;
 
@@ -148,11 +111,7 @@ export default function Nav() {
         <div className="lum-nav-right">
           <div className="lum-nav-desktop">
             {NAV_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="lum-scroll-link"
-                onClick={(e) => handleLinkClick(e, item.href)}
+              <a key={item.label} href={item.href} className="lum-scroll-link" onClick={(e) => handleLinkClick(e, item.href)}
               >
                 {item.label}
               </a>
@@ -169,9 +128,7 @@ export default function Nav() {
               </svg>
             </button>
           </div>
-          <button
-            className="lum-hamburger"
-            onClick={() => setOpen(!open)}
+          <button className="lum-hamburger" onClick={() => setOpen(!open)}
             aria-label={open ? 'Cerrar menu' : 'Abrir menu'}
           >
             <span className={`lum-ham-line ${open ? 'lum-ham-open' : ''}`} />
@@ -180,7 +137,7 @@ export default function Nav() {
       </div>
 
       {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>{panel}</AnimatePresence>,
+        panel,
         document.body
       )}
 
@@ -315,25 +272,7 @@ export default function Nav() {
         }
       `}</style>
 
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `{
-  function setupDarkToggle(btnId) {
-    var btn = document.getElementById(btnId);
-    if (!btn) return;
-    btn.addEventListener('click', function() {
-      document.documentElement.classList.toggle('lum-dark');
-      var isDark = document.documentElement.classList.contains('lum-dark');
-      try { localStorage.setItem('lum-theme', isDark ? 'dark' : 'light'); } catch(e) {}
-      var meta = document.querySelector('meta[name="color-scheme"]');
-      if (meta) meta.content = isDark ? 'dark' : 'light dark';
-    });
-  }
-  setupDarkToggle('lum-dark-toggle');
-  setupDarkToggle('lum-dark-toggle-mobile');
-}`,
-        }}
-      />
+      <script dangerouslySetInnerHTML={{ __html: `{ function setupDarkToggle(btnId) { var btn = document.getElementById(btnId); if (!btn) return; btn.addEventListener('click', function() { document.documentElement.classList.toggle('lum-dark'); var isDark = document.documentElement.classList.contains('lum-dark'); try { localStorage.setItem('lum-theme', isDark ? 'dark' : 'light'); } catch(e) {} var meta = document.querySelector('meta[name="color-scheme"]'); if (meta) meta.content = isDark ? 'dark' : 'light dark'; }); } setupDarkToggle('lum-dark-toggle'); setupDarkToggle('lum-dark-toggle-mobile'); }`, }} />
     </nav>
   );
 }

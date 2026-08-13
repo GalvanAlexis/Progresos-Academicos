@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin, Testimonial } from '../hooks/useAdmin';
 
 interface Props {
@@ -48,35 +47,11 @@ export default function AdminDashboard({ open, onClose }: Props) {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {open && (
         <>
-          <motion.div
-            key="dash-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            style={{
-              position: 'fixed', inset: 0, zIndex: 300,
-              background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-            }}
-          />
-          <motion.aside
-            key="dash-panel"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            style={{
-              position: 'fixed', top: 0, right: 0, bottom: 0,
-              width: 'min(85vw, 420px)',
-              zIndex: 301,
-              background: 'var(--lum-bg)',
-              display: 'flex', flexDirection: 'column',
-              boxShadow: '-8px 0 32px rgba(0,0,0,0.15)',
-            }}
-          >
+          <div key="dash-overlay" onClick={onClose} />
+          <aside key="dash-panel" >
             <div className="lum-dash-header">
               <h2 className="lum-dash-title">
                 Panel de control
@@ -86,10 +61,7 @@ export default function AdminDashboard({ open, onClose }: Props) {
 
             <div className="lum-dash-tabs">
               {(['images', 'prices', 'testimonials'] as Tab[]).map((t) => (
-                <button
-                  key={t}
-                  className={`lum-dash-tab ${tab === t ? 'lum-dash-tab-active' : ''}`}
-                  onClick={() => setTab(t)}
+                <button key={t} className={`lum-dash-tab ${tab === t ? 'lum-dash-tab-active' : ''}`} onClick={() => setTab(t)}
                 >
                   {t === 'images' ? 'Imagenes' : t === 'prices' ? 'Precios' : 'Recomendados'}
                 </button>
@@ -103,10 +75,7 @@ export default function AdminDashboard({ open, onClose }: Props) {
                   {galleryImages.map((src, i) => (
                     <div key={i} className="lum-dash-field">
                       <label className="lum-dash-field-label">Imagen {i + 1}</label>
-                      <input
-                        className="lum-dash-input"
-                        value={src}
-                        onChange={(e) => updateImage(i, e.target.value)}
+                      <input className="lum-dash-input" value={src} onChange={(e) => updateImage(i, e.target.value)}
                       />
                       <img src={src} alt="" className="lum-dash-preview" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                     </div>
@@ -119,22 +88,12 @@ export default function AdminDashboard({ open, onClose }: Props) {
                   <p className="lum-dash-label">Precios del producto</p>
                   <div className="lum-dash-field">
                     <label className="lum-dash-field-label">Lumina Serum Facial ($)</label>
-                    <input
-                      className="lum-dash-input"
-                      type="number"
-                      min={0}
-                      value={mainPrice}
-                      onChange={(e) => update({ mainPrice: Number(e.target.value) })}
+                    <input className="lum-dash-input" type="number" min={0} value={mainPrice} onChange={(e) => update({ mainPrice: Number(e.target.value) })}
                     />
                   </div>
                   <div className="lum-dash-field">
                     <label className="lum-dash-field-label">Protector Solar SPF 50+ ($)</label>
-                    <input
-                      className="lum-dash-input"
-                      type="number"
-                      min={0}
-                      value={addonPrice}
-                      onChange={(e) => update({ addonPrice: Number(e.target.value) })}
+                    <input className="lum-dash-input" type="number" min={0} value={addonPrice} onChange={(e) => update({ addonPrice: Number(e.target.value) })}
                     />
                   </div>
                 </div>
@@ -144,30 +103,16 @@ export default function AdminDashboard({ open, onClose }: Props) {
                 <div className="lum-dash-section">
                   <p className="lum-dash-label">Agregar / editar recomendado</p>
                   <div className="lum-dash-field">
-                    <input
-                      className="lum-dash-input"
-                      placeholder="Nombre"
-                      value={newTName}
-                      onChange={(e) => setNewTName(e.target.value)}
+                    <input className="lum-dash-input" placeholder="Nombre" value={newTName} onChange={(e) => setNewTName(e.target.value)}
                     />
                   </div>
                   <div className="lum-dash-field">
-                    <textarea
-                      className="lum-dash-input lum-dash-textarea"
-                      placeholder="Texto del testimonio"
-                      value={newTText}
-                      onChange={(e) => setNewTText(e.target.value)}
+                    <textarea className="lum-dash-input lum-dash-textarea" placeholder="Texto del testimonio" value={newTText} onChange={(e) => setNewTText(e.target.value)}
                     />
                   </div>
                   <div className="lum-dash-field">
                     <label className="lum-dash-field-label">Rating: {newTRating} estrella(s)</label>
-                    <input
-                      className="lum-dash-input"
-                      type="range"
-                      min={1}
-                      max={5}
-                      value={newTRating}
-                      onChange={(e) => setNewTRating(Number(e.target.value))}
+                    <input className="lum-dash-input" type="range" min={1} max={5} value={newTRating} onChange={(e) => setNewTRating(Number(e.target.value))}
                     />
                   </div>
                   <div className="lum-dash-rowbtns">
@@ -175,7 +120,7 @@ export default function AdminDashboard({ open, onClose }: Props) {
                       {editTId ? 'Guardar cambios' : 'Agregar'}
                     </button>
                     {editTId && (
-                      <button className="lum-btn" style={{ background: 'rgba(184,118,118,0.1)', color: 'var(--lum-muted)' }} onClick={cancelEdit}>
+                      <button className="lum-btn" onClick={cancelEdit}>
                         Cancelar
                       </button>
                     )}
@@ -201,16 +146,16 @@ export default function AdminDashboard({ open, onClose }: Props) {
             </div>
 
             <div className="lum-dash-footer">
-              <button className="lum-btn" style={{ background: 'rgba(184,118,118,0.1)', color: 'var(--lum-muted)', width: '100%' }} onClick={reset}>
+              <button className="lum-btn" onClick={reset}>
                 Restaurar valores predeterminados
               </button>
-              <button className="lum-btn lum-btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: 8 }} onClick={onClose}>
+              <button className="lum-btn lum-btn-primary" onClick={onClose}>
                 Cerrar panel
               </button>
             </div>
-          </motion.aside>
+          </aside>
         </>
       )}
-    </AnimatePresence>
+    </>
   );
 }

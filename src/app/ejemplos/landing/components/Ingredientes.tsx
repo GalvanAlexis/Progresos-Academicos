@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
 const INGREDIENTS = [
   { name: 'Acido Hialuronico', desc: 'Hidratacion profunda y relleno de arrugas', detail: 'El acido hialuronico de triple peso molecular hidrata desde la superficie hasta las capas mas profundas de la piel, reduciendo visiblemente las lineas de expresion y aportando volumen natural.', color: '#b87676', potency: 95 },
   { name: 'Vitamina C', desc: 'Antioxidante que ilumina y unifica el tono', detail: 'La vitamina C estabilizada ilumina el cutis, reduce manchas oscuras, unifica el tono y protege contra el dano de los radicales libres y la contaminacion.', color: '#d4a84b', potency: 85 },
@@ -24,44 +22,16 @@ export default function Ingredientes() {
         </p>
         <div className="lum-ing-grid">
           {INGREDIENTS.map((ing, i) => (
-            <div key={ing.name} className="lum-ing-card" style={{ borderLeftColor: ing.color }}>
-              <button
-                onClick={() => setSelected(ing.name)}
+            <div key={ing.name} className="lum-ing-card" >
+              <button onClick={() => setSelected(ing.name)}
                 className="lum-ing-btn"
               >
                 <h3 className="lum-ing-name">{ing.name}</h3>
                 <p className="lum-ing-desc">{ing.desc}</p>
-                <div
-                  style={{
-                    marginTop: 12,
-                    height: 6,
-                    borderRadius: 3,
-                    background: 'rgba(184,118,118,0.12)',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${ing.potency}%` }}
-                    viewport={{ once: true, margin: '-40px' }}
-                    transition={{ duration: 1, ease: 'easeOut', delay: i * 0.1 }}
-                    style={{
-                      height: '100%',
-                      borderRadius: 3,
-                      background: `linear-gradient(90deg, ${ing.color}, ${ing.color}88)`,
-                    }}
-                  />
+                <div>
+                  <div style={{ width: `${ing.potency}%`, height: '100%', borderRadius: 4, background: 'var(--accent)' }} />
                 </div>
-                <span
-                  style={{
-                    display: 'block',
-                    marginTop: 6,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: ing.color,
-                    textAlign: 'right',
-                  }}
-                >
+                <span>
                   {ing.potency}%
                 </span>
               </button>
@@ -70,87 +40,36 @@ export default function Ingredientes() {
         </div>
       </div>
 
-      <AnimatePresence>
+      
         {selected && (
           <>
-            <motion.div
-              key="ing-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelected(null)}
-              style={{
-                position: 'fixed', inset: 0, zIndex: 150,
-                background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
-              }}
+            <div key="ing-backdrop" onClick={() => setSelected(null)}
+              
             />
-            <div
-              style={{
-                position: 'fixed', inset: 0, zIndex: 151,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                pointerEvents: 'none',
-              }}
-            >
+            <div>
               {(() => {
                 const ing = INGREDIENTS.find(x => x.name === selected);
                 if (!ing) return null;
                 return (
-                  <motion.article
-                    key="ing-modal"
-                    initial={{ opacity: 0, scale: 0.85, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.85, y: 20 }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                    style={{
-                      pointerEvents: 'auto',
-                      width: 'min(92vw, 480px)',
-                      maxHeight: '80dvh',
-                      overflow: 'auto',
-                      margin: 16,
-                      background: 'var(--lum-bg)',
-                      borderRadius: 20,
-                      padding: 32,
-                      boxShadow: '0 40px 80px rgba(0,0,0,0.25)',
-                      color: 'var(--lum-text)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <button
-                      onClick={() => setSelected(null)}
-                      style={{
-                        position: 'absolute', top: 12, right: 16,
-                        background: 'none', border: 'none', fontSize: 28,
-                        color: 'var(--lum-muted)', cursor: 'pointer', lineHeight: 1,
-                      }}
+                  <article key="ing-modal" >
+                    <button onClick={() => setSelected(null)}
+                      
                     >
                       &times;
                     </button>
-                    <div
-                      style={{
-                        width: 56, height: 56, borderRadius: '50%',
-                        background: `${ing.color}20`,
-                        margin: '0 auto 16px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                    >
-                      <span style={{ color: ing.color, fontSize: 22, fontWeight: 700 }}>{ing.potency}%</span>
+                    <div style={{ width: 56, height: 56, borderRadius: '50%', background: `${ing.color}20`, margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', }} >
+                      <span>{ing.potency}%</span>
                     </div>
-                    <h3 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: ing.color }}>{ing.name}</h3>
-                    <div
-                      style={{
-                        height: 4, borderRadius: 2, margin: '0 auto 16px',
-                        maxWidth: 200,
-                        background: `linear-gradient(90deg, ${ing.color}, ${ing.color}44)`,
-                      }}
-                    />
-                    <p style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--lum-muted)', margin: 0 }}>{ing.detail}</p>
-                  </motion.article>
+                    <h3>{ing.name}</h3>
+                    <div style={{ height: 4, borderRadius: 2, margin: '0 auto 16px', maxWidth: 200, background: `linear-gradient(90deg, ${ing.color}, ${ing.color}44)`, }} />
+                    <p>{ing.detail}</p>
+                  </article>
                 );
               })()}
             </div>
           </>
         )}
-      </AnimatePresence>
+      
     </section>
   );
 }
