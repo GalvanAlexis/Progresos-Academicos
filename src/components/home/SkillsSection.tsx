@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
+import useEmblaCarousel from "embla-carousel-react";
 
 const SKILL_AREAS = [
   {
@@ -38,6 +39,17 @@ const SKILL_AREAS = [
 
 export default function SkillsSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center", dragFree: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    setScrollSnaps(emblaApi.scrollSnapList());
+    emblaApi.on("select", () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    });
+  }, [emblaApi]);
 
   const toggleSkill = (id: string | null) => {
     const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -97,27 +109,23 @@ export default function SkillsSection() {
           </h2>
         </div>
 
-        {/* Masonry layout con CSS Columns */}
-        <div
-          style={{
-            columns: '3 280px',
-            columnGap: '20px',
-          }}
-        >
+        {/* Carrusel (Embla) */}
+        <div className="embla" ref={emblaRef} style={{ overflow: "hidden", margin: "0 -20px", padding: "20px" }}>
+          <div className="embla__container" style={{ display: "flex", touchAction: "pan-y", marginLeft: "-20px" }}>
           {SKILL_AREAS.map((area) => {
             const isSelected = selectedId === area.id;
 
             return (
+              <div key={area.id} style={{ flex: "0 0 auto", minWidth: 0, paddingLeft: "20px", width: "100%", maxWidth: "340px" }}>
               <article
-                key={area.id}
                 onClick={() => toggleSkill(area.id)}
                 className="skill-card reveal"
                 style={{ 
                   cursor: 'pointer', 
-                  breakInside: 'avoid', 
-                  marginBottom: '20px', 
-                  display: 'inline-block', 
+                  display: 'flex', 
+                  flexDirection: 'column',
                   width: '100%',
+                  height: '100%',
                   transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
                   viewTransitionName: isSelected ? "skill-card" : "none",
                   visibility: isSelected ? "hidden" : "visible",
@@ -215,8 +223,10 @@ export default function SkillsSection() {
                   ))}
                 </div>
               </article>
+              </div>
             );
           })}
+          </div>
         </div>
       </div>
 
