@@ -29,7 +29,53 @@ const NAV_ITEMS = [
 export default function AdminSidebar() {
   const pathname = usePathname();
 
+  const closePopover = () => {
+    try {
+      (document.getElementById('admin-mobile-menu') as any)?.hidePopover();
+    } catch (e) {}
+  };
+
+  const navContent = (isMobile: boolean) => (
+    <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      {NAV_ITEMS.map((item) => {
+        const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/admin');
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={isMobile ? closePopover : undefined}
+            className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group ${
+              isActive 
+                ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-inner' 
+                : 'text-white/60 hover:bg-white/5 hover:text-white border border-transparent'
+            }`}
+          >
+            <span className={`transition-colors duration-200 ${isActive ? 'text-blue-400' : 'text-white/40 group-hover:text-white/70'}`}>
+              {item.icon}
+            </span>
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+
+  const footerContent = (isMobile: boolean) => (
+    <div className="p-4 border-t border-white/10 bg-[#0a0a0a]/50 mt-auto">
+      <Link
+        href="/"
+        onClick={isMobile ? closePopover : undefined}
+        className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-white/70 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200"
+      >
+        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+        Volver a la Web
+      </Link>
+    </div>
+  );
+
   return (
+    <>
+      {/* Desktop Sidebar */}
     <aside className="w-64 border-r border-white/10 bg-[#111] hidden md:flex flex-col shrink-0 sticky top-0 h-screen shadow-xl shadow-black/50 z-20">
       <div className="h-16 flex items-center px-6 border-b border-white/10 bg-[#0a0a0a]/50">
         <span className="text-xl font-black text-white tracking-tighter">
@@ -37,37 +83,33 @@ export default function AdminSidebar() {
         </span>
       </div>
       
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/admin');
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group ${
-                isActive 
-                  ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-inner' 
-                  : 'text-white/60 hover:bg-white/5 hover:text-white border border-transparent'
-              }`}
-            >
-              <span className={`transition-colors duration-200 ${isActive ? 'text-blue-400' : 'text-white/40 group-hover:text-white/70'}`}>
-                {item.icon}
-              </span>
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+        {navContent(false)}
+        {footerContent(false)}
+      </aside>
 
-      <div className="p-4 border-t border-white/10 bg-[#0a0a0a]/50">
-        <Link
-          href="/"
-          className="flex items-center justify-center w-full px-4 py-2.5 text-sm font-medium text-white/70 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200"
-        >
-          <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-          Volver a la Web
-        </Link>
+      {/* Mobile Popover Sidebar */}
+      <div
+        id="admin-mobile-menu"
+        popover="auto"
+        className="md:hidden"
+        style={{
+          margin: 0,
+          top: '64px', /* h-16 */
+          left: 0,
+          bottom: 0,
+          height: 'calc(100vh - 64px)',
+          width: '260px',
+          background: '#111',
+          border: 'none',
+          borderRight: '1px solid rgba(255,255,255,0.1)',
+          padding: 0,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {navContent(true)}
+        {footerContent(true)}
       </div>
-    </aside>
+    </>
   );
 }
