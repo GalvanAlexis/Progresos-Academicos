@@ -8,11 +8,6 @@ import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAppContext } from '@/lib/AppContext';
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
 const HOME_SECTIONS = [
   { id: 'hero', label: 'Inicio' },
   { id: 'servicios', label: 'Servicios' },
@@ -24,58 +19,49 @@ const NAV_ITEMS = [
   { label: 'Chat Assistant', path: '/chat' },
 ];
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
   const { animationsEnabled, setAnimationsEnabled, theme, toggleTheme } = useAppContext();
+
+  const closePopover = () => {
+    try {
+      (document.getElementById('mobile-menu') as any)?.hidePopover();
+    } catch(e) {}
+  };
 
   const scrollTo = (id: string) => {
     if (pathname !== '/') {
       router.push('/');
       setTimeout(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-        onClose();
+        closePopover();
       }, 200);
     } else {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      onClose();
+      closePopover();
     }
   };
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Panel (Popover) */}
       <div
-        onClick={onClose}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 30,
-          background: 'rgba(0,0,0,0.5)',
-          opacity: isOpen ? 1 : 0,
-          pointerEvents: isOpen ? 'auto' : 'none',
-          transition: 'opacity 0.2s ease',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Panel */}
-      <aside
+        id="mobile-menu"
+        popover="auto"
         role="dialog"
-        aria-modal={isOpen}
         aria-label="Panel de navegacion"
         style={{
-          position: 'fixed',
+          margin: 0,
           top: '56px', /* h-14 */
           left: 0,
           bottom: 0,
+          height: 'calc(100vh - 56px)',
           width: '260px',
-          zIndex: 40,
           background: 'var(--surface)',
+          border: 'none',
           borderRight: '1px solid var(--border)',
-          overflowY: 'auto',
-          transform: isOpen ? 'translateX(0)' : 'translateX(-260px)',
-          transition: 'transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          padding: 0,
           display: 'flex',
           flexDirection: 'column',
           gap: '0',
@@ -95,7 +81,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             Menú
           </span>
           <button
-            onClick={onClose}
+            popoverTarget="mobile-menu"
+            popoverTargetAction="hide"
             style={{ color: 'var(--muted)', lineHeight: 1, padding: '4px', borderRadius: '4px', transition: 'color 0.15s' }}
             onMouseEnter={e => (e.currentTarget.style.color = 'var(--foreground)')}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
@@ -142,7 +129,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           {NAV_ITEMS.map(item => (
             <button
               key={item.path}
-              onClick={() => { onClose(); router.push(item.path); }}
+              onClick={() => { closePopover(); router.push(item.path); }}
               style={{
                 display: 'block',
                 width: '100%',
@@ -169,7 +156,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             Sistema
           </p>
           <button
-            onClick={() => { onClose(); router.push('/login'); }}
+            onClick={() => { closePopover(); router.push('/login'); }}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -287,7 +274,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             v1.0.0 — Portfolio Blado
           </div>
         </section>
-      </aside>
+      </div>
     </>
   );
 }

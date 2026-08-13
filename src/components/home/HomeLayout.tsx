@@ -19,9 +19,6 @@ const CursorGlow = dynamic(() => import('@/components/home/CursorGlow'), { ssr: 
 const ParallaxDecor = dynamic(() => import('@/components/home/ParallaxDecor'), { ssr: false });
 
 export default function HomeLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-
   return (
     <>
       {/* Skip-to-content link para accesibilidad */}
@@ -54,15 +51,9 @@ export default function HomeLayout() {
       <ReadingProgress />
       <ParallaxDecor />
 
-      <Navbar
-        onToggleSidebar={() => setSidebarOpen((p) => !p)}
-        sidebarOpen={sidebarOpen}
-      />
+      <Navbar />
 
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+      <Sidebar />
 
 
 
