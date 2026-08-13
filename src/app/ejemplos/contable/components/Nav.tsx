@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
 
@@ -79,83 +78,35 @@ export default function Nav() {
 
   const panel = open ? (
     <>
-      <motion.div
-        key="con-overlay"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={close}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 999998,
-          background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-        }}
-      />
-      <motion.nav
-        key="con-panel"
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        style={{
-          position: 'fixed', top: 0, right: 0, bottom: 0,
-          width: 'min(75vw, 300px)',
-          zIndex: 999999,
-          background: BG_WARM,
-          display: 'flex', flexDirection: 'column',
-          padding: '56px 32px 32px',
-          boxShadow: '-8px 0 32px rgba(0,0,0,0.15)',
-        }}
-      >
+      <div key="con-overlay" onClick={close} />
+      <nav key="con-panel" >
         {NAV_ITEMS.map((item, i) => (
-          <motion.a
-            key={item.label}
-            href={item.href}
-            className="con-scroll-link con-mobile-link"
-            onClick={(e) => handleLinkClick(e, item.href)}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.07, type: 'spring', stiffness: 300, damping: 25 }}
+          <a key={item.label} href={item.href} className="con-scroll-link con-mobile-link" onClick={(e) => handleLinkClick(e, item.href)}
+            
+            
+            
           >
             {item.label}
-          </motion.a>
+          </a>
         ))}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
-          style={{ marginTop: 'auto' }}
-        >
-          <button
-            className="con-mobile-admin"
-            onClick={() => { setOpen(false); setShowLogin(true); }}
+        <div>
+          <button className="con-mobile-admin" onClick={() => { setOpen(false); setShowLogin(true); }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
             </svg>
             Ingresar
           </button>
-        </motion.div>
-      </motion.nav>
+        </div>
+      </nav>
     </>
   ) : null;
 
   return (
     <>
       {/* ─── Top Bar ─── */}
-      <div
-        style={{
-          background: GRANATE_DARK,
-          color: 'rgba(255,255,255,0.8)',
-          fontSize: 12,
-          padding: '6px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '4px 16px',
-        }}
-      >
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+      <div>
+        <div>
           <span>&#9742; (02241) 45-6789</span>
           <span>&#9993; estudio@mya-contable.com.ar</span>
         </div>
@@ -163,69 +114,25 @@ export default function Nav() {
       </div>
 
       {/* ─── Nav ─── */}
-      <nav
-        ref={navRef}
-        style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          background: 'rgba(245,243,240,0.95)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(0,0,0,0.04)',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1100,
-            margin: '0 auto',
-            padding: '0 24px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: 56,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <a
-              href="/servicios"
-              style={{
-                fontSize: 12, color: TEXT_SEC, textDecoration: 'none',
-                fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4,
-                transition: 'color 0.2s',
-              }}
-            >
+      <nav ref={navRef} >
+        <div>
+          <div>
+            <a href="/servicios" >
               &larr; Servicios
             </a>
-            <span style={{ fontSize: 17, fontWeight: 700, color: GRANATE, letterSpacing: '-0.01em' }}>M&amp;A</span>
+            <span>M&amp;A</span>
           </div>
 
           {/* Desktop links */}
-          <div className="con-nav-desktop" style={{ alignItems: 'center', gap: 20, fontSize: 13, fontWeight: 500, color: TEXT_SEC }}>
+          <div className="con-nav-desktop" >
             {NAV_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="con-scroll-link"
-                onClick={(e) => handleLinkClick(e, item.href)}
-                style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.2s' }}
+              <a key={item.label} href={item.href} className="con-scroll-link" onClick={(e) => handleLinkClick(e, item.href)}
+                
               >
                 {item.label}
               </a>
             ))}
-            <button
-              className="con-login-btn"
-              onClick={handleLoginClick}
-              aria-label="Ingresar"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                fontSize: 13, fontWeight: 500, color: TEXT_SEC,
-                background: 'none', border: '1px solid rgba(122,26,26,0.15)',
-                borderRadius: 8, padding: '6px 12px', cursor: 'pointer',
-                fontFamily: 'inherit', transition: 'all 0.2s',
-              }}
-            >
+            <button className="con-login-btn" onClick={handleLoginClick} aria-label="Ingresar" >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>
               </svg>
@@ -234,9 +141,7 @@ export default function Nav() {
           </div>
 
           {/* Hamburger (mobile) */}
-          <button
-            className="con-hamburger"
-            onClick={() => setOpen(!open)}
+          <button className="con-hamburger" onClick={() => setOpen(!open)}
             aria-label={open ? 'Cerrar menu' : 'Abrir menu'}
           >
             <span className={`con-ham-line ${open ? 'con-ham-open' : ''}`} />
@@ -245,7 +150,7 @@ export default function Nav() {
       </nav>
 
       {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>{panel}</AnimatePresence>,
+        panel,
         document.body
       )}
 

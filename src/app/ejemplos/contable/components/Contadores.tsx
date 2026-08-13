@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-
 const GRANATE = '#7a1a1a';
 const TEXT_SEC = '#5a5550';
 
@@ -16,7 +14,7 @@ const METRICS = [
 function AnimatedCounter({ target, suffix }: { target: number; suffix: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = true;
   const done = useRef(false);
 
   useEffect(() => {
@@ -44,42 +42,20 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
 
 export default function Contadores() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = true;
 
   return (
-    <motion.section
-      ref={ref}
-      id="metrics"
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      style={{ padding: 'clamp(48px, 8vh, 72px) 24px', background: '#fff' }}
-    >
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-around',
-          flexWrap: 'wrap',
-          gap: 32,
-        }}
-      >
+    <section ref={ref} id="metrics">
+      <div>
         {METRICS.map((m, i) => (
-          <motion.div
-            key={m.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-            style={{ textAlign: 'center' }}
-          >
-            <div style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 700, color: GRANATE, lineHeight: 1 }}>
+          <div key={m.label}>
+            <div>
               <AnimatedCounter target={m.target} suffix={m.suffix} />
             </div>
-            <div style={{ fontSize: 13, color: TEXT_SEC, marginTop: 6 }}>{m.label}</div>
-          </motion.div>
+            <div>{m.label}</div>
+          </div>
         ))}
       </div>
-    </motion.section>
+    </section>
   );
 }

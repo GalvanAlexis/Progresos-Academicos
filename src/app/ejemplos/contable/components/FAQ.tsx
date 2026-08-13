@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
 import type { FAQItem } from '../hooks/useAdmin';
 
 const BG_SECTION = '#edeae5';
@@ -15,112 +14,48 @@ interface Props {
 
 export default function FAQ({ faq }: Props) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  
 
   return (
-    <section
-      id="faq"
-      style={{
-        padding: 'clamp(60px, 10vh, 100px) 24px',
-        background: BG_SECTION,
-      }}
-    >
-      <div ref={ref} style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: 'center', marginBottom: 48 }}
-        >
-          <p style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: GRANATE, fontWeight: 700, margin: '0 0 8px 0' }}>
+    <section id="faq" >
+      <div ref={ref} >
+        <div >
+          <p>
             FAQ
           </p>
-          <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, margin: '0 0 12px 0', color: TEXT_PRIMARY }}>
+          <h2>
             Preguntas frecuentes
           </h2>
-          <p style={{ fontSize: 15, color: TEXT_SEC, maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
+          <p>
             Las dudas mas comunes que recibimos. Si tenes otra, consultanos sin compromiso.
           </p>
-        </motion.div>
+        </div>
 
-        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <div>
           {faq.length === 0 && (
-            <p style={{ fontSize: 13, color: TEXT_SEC, textAlign: 'center' }}>
+            <p>
               No hay preguntas frecuentes cargadas.
             </p>
           )}
           {faq.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: i * 0.08, duration: 0.4, ease: 'easeOut' }}
-            >
-              <details
-                name="con-faq"
-                style={{
-                  background: '#fff',
-                  borderRadius: 8,
-                  marginBottom: 8,
-                  border: '1px solid rgba(0,0,0,0.04)',
-                  overflow: 'hidden',
-                }}
-              >
-                <summary
-                  style={{
-                    padding: '16px 20px',
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: TEXT_PRIMARY,
-                    cursor: 'pointer',
-                    listStyle: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    userSelect: 'none',
-                  }}
-                >
+            <div key={item.id} >
+              <details name="con-faq" >
+                <summary>
                   {item.q}
-                  <span
-                    className="con-faq-icon"
-                    style={{
-                      fontSize: 16,
-                      color: GRANATE,
-                      transition: 'transform 0.2s',
-                      display: 'inline-block',
-                    }}
-                  >
+                  <span className="con-faq-icon" >
                     +
                   </span>
                 </summary>
-                <div
-                  style={{
-                    padding: '0 20px 16px',
-                    fontSize: 13,
-                    color: TEXT_SEC,
-                    lineHeight: 1.6,
-                  }}
-                >
+                <div>
                   {item.a}
                 </div>
               </details>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
 
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `{
-  document.querySelectorAll('details[name="con-faq"]').forEach(function(d){
-    d.addEventListener('toggle', function(){
-      var icon = d.querySelector('.con-faq-icon');
-      if (icon) icon.style.transform = d.open ? 'rotate(45deg)' : 'rotate(0deg)';
-    });
-  });
-}()`,
-        }}
-      />
+      <script dangerouslySetInnerHTML={{ __html: `{ document.querySelectorAll('details[name="con-faq"]').forEach(function(d){ d.addEventListener('toggle', function(){ var icon = d.querySelector('.con-faq-icon'); if (icon) icon.style.transform = d.open ? 'rotate(45deg)' : 'rotate(0deg)'; }); }); }()`, }} />
     </section>
   );
 }

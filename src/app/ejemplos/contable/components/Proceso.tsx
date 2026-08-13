@@ -1,8 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
-
 const GRANATE = '#7a1a1a';
 const BG_SECTION = '#edeae5';
 const TEXT_PRIMARY = '#1a1a1a';
@@ -37,61 +35,30 @@ const PROCESO = [
 
 export default function Proceso() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
-    <section
-      id="proceso"
-      style={{
-        padding: 'clamp(60px, 10vh, 100px) 24px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, height: '40%',
-          background: BG_SECTION,
-          zIndex: 0,
-          clipPath: 'polygon(0 0, 100% 0, 100% 70%, 0 100%)',
-        }}
-      />
-      <div ref={ref} style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: 'center', marginBottom: 48 }}
-        >
-          <p style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: GRANATE, fontWeight: 700, margin: '0 0 8px 0' }}>
+    <section id="proceso" >
+      <div />
+      <div ref={ref} >
+        <div >
+          <p>
             Proceso
           </p>
-          <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, margin: '0 0 12px 0', color: TEXT_PRIMARY }}>
+          <h2>
             Como trabajamos
           </h2>
-          <p style={{ fontSize: 15, color: TEXT_SEC, maxWidth: 560, margin: '0 auto', lineHeight: 1.6 }}>
+          <p>
             Toca cada paso para ver los detalles. Un proceso simple y transparente.
           </p>
-        </motion.div>
+        </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: 24,
-          }}
-        >
+        <div>
           {PROCESO.map((p, i) => {
             const isOpen = expanded === p.paso;
             return (
-              <motion.div
-                key={p.paso}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ delay: i * 0.1, duration: 0.5, ease: 'easeOut' }}
-                onClick={() => setExpanded(isOpen ? null : p.paso)}
+              <div key={p.paso} onClick={() => setExpanded(isOpen ? null : p.paso)}
                 style={{
                   background: '#fff',
                   borderRadius: 10,
@@ -119,93 +86,41 @@ export default function Proceso() {
                   }
                 }}
               >
-                <div
-                  style={{
-                    width: 36, height: 36, borderRadius: '50%',
-                    background: GRANATE, color: '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 15, fontWeight: 700, marginBottom: 14,
-                  }}
-                >
+                <div>
                   {p.paso}
                 </div>
-                <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 8px 0', color: TEXT_PRIMARY }}>
+                <h3>
                   {p.titulo}
                 </h3>
-                <p style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.6, margin: 0 }}>
+                <p>
                   {p.desc}
                 </p>
 
-                <AnimatePresence initial={false}>
+                
                   {isOpen && (
-                    <motion.div
-                      key="detalle"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: 'easeInOut' }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <div
-                        style={{
-                          marginTop: 14,
-                          paddingTop: 14,
-                          borderTop: '1px solid rgba(122,26,26,0.08)',
-                          fontSize: 13,
-                          color: TEXT_SEC,
-                          lineHeight: 1.7,
-                        }}
-                      >
+                    <div key="detalle" >
+                      <div>
                         {p.detalle}
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
+                
 
-                <div
-                  style={{
-                    marginTop: 10,
-                    fontSize: 11,
-                    color: GRANATE,
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
-                >
+                <div>
                   {isOpen ? 'Ver menos' : 'Ver detalle'}
-                  <motion.span
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    style={{ display: 'inline-block' }}
-                  >
+                  <span>
                     &#9660;
-                  </motion.span>
+                  </span>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
         {PROCESO.length > 1 && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${PROCESO.length - 1}, 1fr)`,
-              gap: 24,
-              marginTop: 16,
-              padding: '0 18px',
-            }}
-          >
+          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${PROCESO.length - 1}, 1fr)`, gap: 24, marginTop: 16, padding: '0 18px', }} >
             {Array.from({ length: PROCESO.length - 1 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  height: 2,
-                  background: 'rgba(122,26,26,0.10)',
-                  borderRadius: 1,
-                }}
-              />
+              <div key={i} />
             ))}
           </div>
         )}
