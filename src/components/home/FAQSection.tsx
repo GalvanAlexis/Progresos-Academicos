@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FAQ_DATA } from '@/data/faq-data';
 
 const faqSchema = {
@@ -15,6 +15,12 @@ const faqSchema = {
 };
 
 export default function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const handleToggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
     <section
       id="faq"
@@ -67,6 +73,11 @@ export default function FAQSection() {
             <details
               key={index}
               className="reveal"
+              open={openIndex === index}
+              onClick={(e) => {
+                e.preventDefault();
+                handleToggle(index);
+              }}
               style={{
                 background: 'var(--surface)',
                 border: '1px solid var(--border)',

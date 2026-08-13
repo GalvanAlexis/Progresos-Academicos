@@ -104,7 +104,17 @@ const SERVICES = [
 export default function ServicesSection() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [emblaRef] = useEmblaCarousel({ loop: true, align: "center", dragFree: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center", dragFree: true });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    setScrollSnaps(emblaApi.scrollSnapList());
+    emblaApi.on("select", () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    });
+  }, [emblaApi]);
 
   useEffect(() => {
     if (selectedId) {
@@ -338,6 +348,28 @@ export default function ServicesSection() {
           })}
         </div>
       </div>
+      
+      {/* Dots */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "32px" }}>
+        {scrollSnaps.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => emblaApi?.scrollTo(index)}
+            style={{
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              background: index === selectedIndex ? "var(--accent)" : "var(--border)",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              transition: "all 0.2s",
+              transform: index === selectedIndex ? "scale(1.2)" : "scale(1)",
+            }}
+            aria-label={`Ir a slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
 
       {/* Expanded Modal */}
@@ -382,29 +414,16 @@ export default function ServicesSection() {
                       padding: "32px",
                       width: "100%",
                       maxWidth: "540px",
+                      maxHeight: "85vh",
+                      overflowY: "auto",
                       boxShadow: "var(--card-shadow-lg)",
                       pointerEvents: "auto",
                       position: "relative",
                       viewTransitionName: "service-card",
+                      cursor: "pointer",
                     }}
+                    onClick={() => toggleService(null)}
                   >
-                    <button
-                      onClick={() => toggleService(null)}
-                      style={{
-                        position: "absolute",
-                        top: "16px",
-                        right: "16px",
-                        background: "transparent",
-                        border: "none",
-                        color: "var(--muted)",
-                        cursor: "pointer",
-                        padding: "8px",
-                        fontSize: "14px",
-                      }}
-                    >
-                      ✕
-                    </button>
-
                     <div
                       style={{
                         width: "56px",

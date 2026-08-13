@@ -88,12 +88,11 @@ export default function SkillsSection() {
           </h2>
         </div>
 
-        {/* Cards grid */}
+        {/* Masonry layout con CSS Columns */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-            gap: '20px',
+            columns: '3 280px',
+            columnGap: '20px',
           }}
         >
           {SKILL_AREAS.map((area) => (
@@ -102,7 +101,7 @@ export default function SkillsSection() {
               layoutId={`skill-card-${area.id}`}
               onClick={() => setSelectedId(area.id)}
               className="skill-card reveal"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', breakInside: 'avoid', marginBottom: '20px', display: 'inline-block', width: '100%' }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -231,28 +230,15 @@ export default function SkillsSection() {
                     padding: '32px',
                     width: '100%',
                     maxWidth: '500px',
+                    maxHeight: '85vh',
+                    overflowY: 'auto',
                     boxShadow: 'var(--card-shadow-lg)',
                     pointerEvents: 'auto',
                     position: 'relative',
+                    cursor: 'pointer',
                   }}
+                  onClick={() => setSelectedId(null)}
                 >
-                  <button
-                    onClick={() => setSelectedId(null)}
-                    style={{
-                      position: 'absolute',
-                      top: '16px',
-                      right: '16px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--muted)',
-                      cursor: 'pointer',
-                      padding: '8px',
-                      fontSize: '14px',
-                    }}
-                  >
-                    ✕
-                  </button>
-
                   <motion.div
                     layoutId={`skill-icon-${area.id}`}
                     style={{
