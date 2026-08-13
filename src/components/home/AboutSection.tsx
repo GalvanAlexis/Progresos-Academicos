@@ -15,7 +15,7 @@ const ABOUT_CHAPTERS = [
       "Data Science",
       "SaaS",
       "Arquitectura",
-      "5+ años exp",
+      "3+ años exp",
     ],
   },
   {
